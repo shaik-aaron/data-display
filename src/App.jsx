@@ -1,37 +1,23 @@
 import "./App.css";
 import { useEffect, useState } from "react";
-import generateData from "../generateData";
 
 function App() {
   const [displayArray, setDisplayArray] = useState([]);
-  const [flag, setFlag] = useState(false);
-
-  async function getRandomData() {
-    const res = await generateData();
-    setDisplayArray(res);
-  }
 
   useEffect(() => {
-    getRandomData();
-  }, [flag]);
-
-  console.log(displayArray);
+    fetch("http://localhost:3001/api/data")
+      .then((res) => res.json())
+      .then((data) => {
+        setDisplayArray(data);
+      });
+  }, []);
 
   return (
     <>
       <div className="table-container">
-        <div className="search-sort">
-          <div
-            onClick={() => setFlag((prev) => !prev)}
-            className="sort"
-            role="button"
-          >
-            <p>Generate Records</p>
-          </div>
-        </div>
         <table cellSpacing={0} style={{ width: "100%" }}>
           <tr className="heading-row">
-            <th className="left">ID</th>
+            <th className="left">User ID</th>
             <th className="left">
               <div style={{ display: "flex", gap: 4 }}>
                 <p>Full Name</p>
@@ -51,14 +37,13 @@ function App() {
             </th>
           </tr>
           {displayArray.map((object) => {
+            console.log(typeof object?.dob);
             return (
               <tr className="data-row">
-                <td className="left order-id">{object.id}</td>
-                <td className="left others">{object.name}</td>
-                <td className="right others">{object.age}</td>
-                <td className="right others">
-                  {object.DOB.toLocaleDateString("en-IN")}
-                </td>
+                <td className="left order-id">{object?.ID}</td>
+                <td className="left others">{object?.name}</td>
+                <td className="right others">{object?.age}</td>
+                <td className="right others">{object?.dob}</td>
               </tr>
             );
           })}
